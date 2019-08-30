@@ -1,0 +1,16 @@
+{
+  "name": "twitter-irc-udp",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Douglas Gardner <douglas@chippy.ch>",
+  "license": "ISC",
+  "dependencies": {
+    "irc-colors": "^1.5.0",
+    "twitter-autohook": "^1.2.1"
+  }
+}
