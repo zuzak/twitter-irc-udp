@@ -59,7 +59,7 @@ const sendUdp = (str) => {
           c.teal(`@${data.source.screen_name}`),
           c.white(data.source.name),
           data.source.verified ? c.cyan.bgblue('verified') : `(${data.source.followers_count} followers)`,
-          c.underline.lime('followed'),
+          c.underline.pink('followed'),
           c.gray(`https://twitter.com/${data.target.screen_name}`),
           c.blue(`👥 ${data.target.followers_count.toLocaleString('en-GB')}`)
         ].join(' '))
@@ -71,11 +71,28 @@ const sendUdp = (str) => {
             output([
               c.teal(`@${data.user.screen_name}`),
               c.white(data.user.name),
-              c.underline.pink('retweeted'),
+              c.underline.lime('retweeted'),
               c.gray(`https://twitter.com/${data.retweeted_status.user.screen_name}/status/${data.retweeted_status.id_str}`),
-              c.purple(`↺ ${data.retweeted_status.retweet_count}`),
+              c.green(`↺ ${data.retweeted_status.retweet_count}`),
               data.is_quote_status ? c.bold.black.bgyellow('has quote') : ''
             ].join(' '))
+          } else {
+            if (data.in_reply_to_screen_name) {
+              output([
+                c.teal(`@${data.user.screen_name}`),
+                c.white(data.user.name),
+                c.bold.black.bgyellow('replied'),
+                c.yellow(data.text),
+                c.gray(`https://twitter.com/${data.in_reply_to_screen_name}/status/${data.in_reply_to_status_id_str}`)
+              ])
+            } else {
+              output([
+                c.teal(`@${data.user.screen_name}`),
+                c.white(data.user.name),
+                c.bold.black.bgyellow('tweeted'),
+                c.yellow(data.text)
+              ])
+            }
           }
         })
       }
