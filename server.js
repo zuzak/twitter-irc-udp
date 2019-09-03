@@ -61,7 +61,7 @@ const sendUdp = (str) => {
           data.source.verified ? c.cyan.bgblue('verified') : `(${data.source.followers_count} followers)`,
           c.underline.lime('followed'),
           c.gray(`https://twitter.com/${data.target.screen_name}`),
-          c.blue(`👥 ${data.target.followers_count}`)
+          c.blue(`👥 ${data.target.followers_count.toLocaleString('en-GB')}`)
         ].join(' '))
       })
     } else {
