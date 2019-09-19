@@ -17,6 +17,12 @@ let config = {
   retweet: true
 }
 
+let cache = {
+  favourite: {},
+  follow: {},
+  create: {}
+}
+
 const output = (type, str) => {
   if (config[type]) {
     sendUdp(str)
@@ -54,6 +60,8 @@ let ƛ = async () => {
   webhook.on('event', event => {
     if (event.favorite_events) {
       event.favorite_events.forEach((data) => {
+        if (cache.favourite[data.id]) return console.log('duplicate favourite')
+        cache.favourite[data.id] = data.id
         output('like', [
           c.teal(`@${data.user.screen_name}`),
           c.white(data.user.name),
@@ -64,6 +72,8 @@ let ƛ = async () => {
       })
     } else if (event.follow_events) {
       event.follow_events.forEach((data) => {
+        if (cache.follow[data.id]) return console.log('duplicate follow')
+        cache.follow[data.id] = data.id
         output('follow', [
           c.teal(`@${data.source.screen_name}`),
           c.white(data.source.name),
@@ -76,6 +86,8 @@ let ƛ = async () => {
     } else {
       if (event.tweet_create_events) {
         event.tweet_create_events.forEach((data) => {
+          if (cache.create[data.id]) return console.log('duplicate create')
+          cache.create[data.id] = data.id
             let type = 'create'
             if (data.retweeted_status) type = 'retweet'
             if (data.in_reply_to_screen_name) type = 'reply'
