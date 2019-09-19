@@ -9,9 +9,18 @@ const c = require('irc-colors')
 
 let dgram = require('dgram')
 
-const output = (str) => {
-  console.log(str)
-  sendUdp(str)
+let config = {
+  create: true,
+  follow: true,
+  like: true,
+  reply: true,
+  retweet: true
+}
+
+const output = (type, str) => {
+  if (config[type]) {
+    sendUdp(str)
+  }
 }
 
 const PORT = process.env.UDP_PORT
@@ -26,7 +35,7 @@ const sendUdp = (str) => {
   })
 }
 
-(async ƛ => {
+let ƛ = async () => {
   const webhook = new Autohook({
     serverUrl: process.env.SERVER_URL,
     route: '/foo',
@@ -45,7 +54,7 @@ const sendUdp = (str) => {
   webhook.on('event', event => {
     if (event.favorite_events) {
       event.favorite_events.forEach((data) => {
-        output([
+        output('like', [
           c.teal(`@${data.user.screen_name}`),
           c.white(data.user.name),
           c.underline.cyan('liked'),
@@ -55,49 +64,33 @@ const sendUdp = (str) => {
       })
     } else if (event.follow_events) {
       event.follow_events.forEach((data) => {
-        output([
+        output('follow', [
           c.teal(`@${data.source.screen_name}`),
           c.white(data.source.name),
           data.source.verified ? c.cyan.bgblue('verified') : `(${data.source.followers_count} followers)`,
-          c.underline.pink('followed'),
-          c.gray(`https://twitter.com/${data.target.screen_name}`),
+          c.underline.pink(`followed ${data.target.screen_name}`),
+          c.gray(`https://twitter.com/${data.source.screen_name}`),
           c.blue(`👥 ${data.target.followers_count.toLocaleString('en-GB')}`)
         ].join(' '))
       })
     } else {
       if (event.tweet_create_events) {
         event.tweet_create_events.forEach((data) => {
-          if (data.retweeted_status) {
-            output([
+            let type = 'create'
+            if (data.retweeted_status) type = 'retweet'
+            if (data.in_reply_to_screen_name) type = 'reply'
+            output(type, [
               c.teal(`@${data.user.screen_name}`),
               c.white(data.user.name),
-              c.underline.lime('retweeted'),
-              c.gray(`https://twitter.com/${data.retweeted_status.user.screen_name}/status/${data.retweeted_status.id_str}`),
-              c.green(`↺ ${data.retweeted_status.retweet_count}`),
-              data.is_quote_status ? c.bold.black.bgyellow('has quote') : ''
-            ].join(' '))
-          } else {
-            if (data.in_reply_to_screen_name) {
-              output([
-                c.teal(`@${data.user.screen_name}`),
-                c.white(data.user.name),
-                c.bold.black.bgyellow('replied'),
-                c.yellow(data.text),
-                c.gray(`https://twitter.com/${data.in_reply_to_screen_name}/status/${data.in_reply_to_status_id_str}`)
-              ])
-            } else {
-              output([
-                c.teal(`@${data.user.screen_name}`),
-                c.white(data.user.name),
-                c.bold.black.bgyellow('tweeted'),
-                c.yellow(data.text)
-              ])
-            }
-          }
+              data.is_quote_status ? c.underline.lime('quoted') : null,//c.underline.lime('retweeted'),
+              data.text.replace(/\n|\r/g, ' ').replace('RT @BBCBweaking:', c.underline.lime('RT @BBCBweaking:')),
+              data.quoted_status ? c.silver(`RT ${data.quoted_status.text}`) : null,
+              data.retweeted_status ? c.green(`↺ ${data.retweeted_status.retweet_count}`) : null,
+            ].filter((n) => n !== null).join(' '))
         })
+      } else {
+        console.log(event)
       }
-      console.log(event)
-      console.log(JSON.stringify(event))
     }
   })
 
@@ -106,4 +99,7 @@ const sendUdp = (str) => {
 
   // Subscribes to a user's activity
   await webhook.subscribe({oauth_token: process.env.OAUTH_TOKEN, oauth_token_secret: process.env.OAUTH_TOKEN_SECRET})
-})()
+}
+
+setInterval(process.exit, 1000 * 60 * 60)
+ƛ()
