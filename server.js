@@ -93,7 +93,7 @@ let ƛ = async () => {
             if (data.in_reply_to_screen_name) type = 'reply'
             output(type, [
               c.teal(`@${data.user.screen_name}`),
-              c.white(data.user.name),
+              data.user.verified ? c.cyan.bgblue.white(data.user.name) : c.white(data.user.name),
               data.is_quote_status ? c.underline.lime('quoted') : null,//c.underline.lime('retweeted'),
               data.text.replace(/\n|\r/g, ' ').replace('RT @BBCBweaking:', c.underline.lime('RT @BBCBweaking:')),
               data.quoted_status ? c.silver(`RT ${data.quoted_status.text}`) : null,
