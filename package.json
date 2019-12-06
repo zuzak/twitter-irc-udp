@@ -10,6 +10,7 @@
   "author": "Douglas Gardner <douglas@chippy.ch>",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^3.0.0",
     "irc-colors": "^1.5.0",
     "twitter-autohook": "^1.2.1"
   }
