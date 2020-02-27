@@ -15,6 +15,7 @@ let COUNTER = 1
 const dgram = require('dgram')
 
 const config = {
+  block: true,
   create: true,
   follow: true,
   like: true,
@@ -116,6 +117,16 @@ const ƛ = async () => {
             data.retweeted_status ? c.green(`↺ ${data.retweeted_status.retweet_count.toLocaleString('en-GB')}`) : null
           ].filter((n) => n !== null).join(' '))
         })
+      } else if (event.block_events) {
+          event.block_events.forEach((data) => {
+            output('block', [
+              c.teal('@' + data.source.screen_name),
+              c.white(data.source.name),
+              c.red(data.type + 'ed'),
+              c.brown('@' + data.target.screen_name),
+              c.white(data.target.name),
+            ].filter((n) => n !== null).join(' '))
+          })
       } else {
         console.log(event)
       }
