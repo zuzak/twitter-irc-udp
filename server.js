@@ -79,7 +79,7 @@ const ƛ = async () => {
         if (cache.favourite[data.id]) return console.log('duplicate favourite')
         cache.favourite[data.id] = data.id
         output('like', [
-          data.user.verified ? c.verified(`@${data.user.screen_name}`) : c.unverified(`@${data.user.screen_name}`),
+          data.user.verified ? c.verified(`@${data.user.screen_name} ✓`) : c.unverified(`@${data.user.screen_name}`),
           c.white(data.user.name),
           c.underline.cyan('liked'),
           c.gray(`https://twitter.com/${data.favorited_status.user.screen_name}/status/${data.favorited_status.id_str}`),
@@ -91,7 +91,7 @@ const ƛ = async () => {
         if (cache.follow[data.id]) return console.log('duplicate follow')
         cache.follow[data.id] = data.id
         output('follow', [
-          data.source.verified ? c.verified(`@${data.source.screen_name}`) : c.unverified(`@${data.source.screen_name}`),
+          data.source.verified ? c.verified(`@${data.source.screen_name} ✓`) : c.unverified(`@${data.source.screen_name}`),
           c.white(data.source.name),
           data.source.verified ? c.cyan.bgblue('verified') : `(${data.source.followers_count.toLocaleString('en-GB')} followers)`,
           c.underline.pink(`followed ${data.target.screen_name}`),
@@ -109,8 +109,8 @@ const ƛ = async () => {
           if (data.retweeted_status) type = 'retweet'
           if (data.in_reply_to_screen_name) type = 'reply'
           output(type, [
-            data.user.verified ? c.verified(`@${data.user.screen_name}`) : c.unverified(`@${data.user.screen_name}`),
-            data.user.verified ? c.cyan.bgblue.white(data.user.name) : c.white(data.user.name),
+            data.user.verified ? c.verified(`@${data.user.screen_name} ✓`) : c.unverified(`@${data.user.screen_name}`),
+            data.user.verified ? c.cyan.bgblue(data.user.name) : c.white(data.user.name),
             data.is_quote_status ? c.underline.lime('quoted') : null, // c.underline.lime('retweeted'),
             data.text.replace(/\n|\r/g, ' ').replace('RT @BBCBweaking:', c.underline.lime('RT @BBCBweaking:')),
             data.quoted_status ? c.silver(`RT ${data.quoted_status.text}`) : null,
