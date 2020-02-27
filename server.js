@@ -143,7 +143,7 @@ const ƛ = async () => {
 const incrementCounter = () => {
   COUNTER++
   process.stdout.write(chalk.gray(String(COUNTER).padStart(2, '0')))
-  if (COUNTER > 70) process.exit()
+  if (COUNTER > 130) process.exit()
 }
 setInterval(incrementCounter, 1000)
 ƛ()
